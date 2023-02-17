@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Music World</string>
+
+    <!--    Content Description-->
+    <string name="shuffle_button_cd">Shuffle Music</string>
+    <string name="playlist_button_cd">Music playlists</string>
+    <string name="favourite_button_cd">Favourite Songs</string>
+    <string name="next_button_cd">Next Music</string>
+
+    <!--    Text-->
+</resources>

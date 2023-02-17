@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="name"
+            type="String" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraint"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".Activity.MainActivity">
+
+            <LinearLayout
+                android:id="@+id/linearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/shuffleBtn"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:contentDescription="@string/shuffle_button_cd"
+                    android:src="@drawable/shuffle" />
+
+                <ImageView
+                    android:id="@+id/playlistBtn"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:contentDescription="@string/playlist_button_cd"
+                    android:src="@drawable/playlist" />
+
+                <ImageView
+                    android:id="@+id/favouriteBtn"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:contentDescription="@string/favourite_button_cd"
+                    android:src="@drawable/favourite" />
+
+            </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:orientation="horizontal">
+
+
+            <ImageView
+                android:id="@+id/current_music_icon"
+                android:layout_width="55dp"
+                android:layout_marginStart="5dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0"
+                android:src="@drawable/music_icon"
+                android:contentDescription="TODO" />
+
+            <TextView
+                android:id="@+id/tv_current_music"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textSize="20sp"
+                android:maxLines="2"
+                android:text="@{name}"
+                tools:text="current Music " />
+
+            <ImageView
+                android:id="@+id/previousBtn"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0"
+                android:src="@drawable/previous"
+                android:contentDescription="TODO" />
+
+            <ImageView
+                android:id="@+id/playBtn"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0"
+                android:src="@drawable/play"
+                android:contentDescription="Todo" />
+
+            <ImageView
+                android:id="@+id/nextBtn"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0"
+                android:src="@drawable/next"
+                android:contentDescription="@string/next_button_cd" />
+
+
+        </LinearLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
