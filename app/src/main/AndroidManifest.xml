@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
     <application
+        android:name=".Activity.MyApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -19,11 +20,15 @@
         <service
             android:name=".Activity.MusicService"
             android:enabled="true"
-            android:foregroundServiceType="dataSync">
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.media.browse.MediaBrowserService" />
+            </intent-filter>
         </service>
 
         <activity
             android:name=".Activity.MusicActivity"
+            android:parentActivityName=".Activity.MainActivity"
             android:exported="false" />
         <activity
             android:name=".Activity.Splash"

@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.BaseRequestOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.android.musicworld.Activity.Music;
+import com.example.android.musicworld.Activity.MusicService;
 import com.example.android.musicworld.R;
 
 import java.util.ArrayList;
@@ -26,6 +27,9 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MyHolder> {
     Context context;
     OnItemClickListener listener;
 
+    private static final int MUSIC_VIEW = 0;
+    private static final int CURRENT_MUSIC_VIEW = 1;
+
     public MusicAdapter(Context context,List<Music> song_list,OnItemClickListener listener){
         this.context = context;
         this.song_list = song_list;
@@ -35,7 +39,18 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MyHolder> {
     @NonNull
     @Override
     public MusicAdapter.MyHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.music_item,parent,false);
+
+        int layoutId = 0;
+        switch (viewType){
+            case MUSIC_VIEW:
+                layoutId = R.layout.music_item;
+                break;
+            case CURRENT_MUSIC_VIEW:
+                layoutId = R.layout.current_music_item;
+                break;
+        }
+
+        View view = LayoutInflater.from(parent.getContext()).inflate(layoutId,parent,false);
         return new MyHolder(view);
     }
 
@@ -85,4 +100,12 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MyHolder> {
         void onClick(int position);
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        if(position== MusicService.current_music_position){
+            return CURRENT_MUSIC_VIEW;
+        }else{
+            return MUSIC_VIEW;
+        }
+    }
 }

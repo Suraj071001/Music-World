@@ -12,7 +12,7 @@
             android:id="@+id/im_current_music_image"
             android:layout_width="match_parent"
             android:layout_height="300dp"
-            android:layout_marginTop="20dp"
+            android:layout_margin="40dp"
             app:layout_constraintBottom_toTopOf="@+id/tv_current_music_name"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -61,6 +61,13 @@
 
 
             <ImageView
+                android:id="@+id/btnQueueMusic"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/queue" />
+
+            <ImageView
                 android:id="@+id/btnPreviousMusic"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
@@ -80,6 +87,13 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 app:srcCompat="@drawable/next" />
+
+            <ImageView
+                android:id="@+id/btnFavouriteMusic"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/favourite_border" />
         </LinearLayout>
 
         <TextView
@@ -91,7 +105,7 @@
             app:layout_constraintTop_toBottomOf="@+id/seekBar" />
 
         <TextView
-            android:id="@+id/textView4"
+            android:id="@+id/max_duration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             tools:text="03:20"

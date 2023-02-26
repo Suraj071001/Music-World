@@ -3,11 +3,17 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/cs991/AndroidStudioProjects/MusicWorld/app/src/main/res/drawable/button_background.xml" value="0.21" />
+        <entry key="..\:/Users/cs991/AndroidStudioProjects/MusicWorld/app/src/main/res/drawable/exit.xml" value="0.21" />
         <entry key="..\:/Users/cs991/AndroidStudioProjects/MusicWorld/app/src/main/res/drawable/ic_launcher_background.xml" value="0.185" />
+        <entry key="..\:/Users/cs991/AndroidStudioProjects/MusicWorld/app/src/main/res/drawable/previous.xml" value="0.21" />
+        <entry key="..\:/Users/cs991/AndroidStudioProjects/MusicWorld/app/src/main/res/drawable/selector.xml" value="0.1" />
+        <entry key="..\:/Users/cs991/AndroidStudioProjects/MusicWorld/app/src/main/res/drawable/shuffle.xml" value="0.21" />
         <entry key="..\:/Users/cs991/AndroidStudioProjects/MusicWorld/app/src/main/res/layout/activity_allow_access.xml" value="0.23229166666666667" />
         <entry key="..\:/Users/cs991/AndroidStudioProjects/MusicWorld/app/src/main/res/layout/activity_main.xml" value="0.25263157894736843" />
-        <entry key="..\:/Users/cs991/AndroidStudioProjects/MusicWorld/app/src/main/res/layout/activity_music.xml" value="0.16883116883116883" />
+        <entry key="..\:/Users/cs991/AndroidStudioProjects/MusicWorld/app/src/main/res/layout/activity_music.xml" value="0.264" />
         <entry key="..\:/Users/cs991/AndroidStudioProjects/MusicWorld/app/src/main/res/layout/activity_splash.xml" value="0.23229166666666667" />
+        <entry key="..\:/Users/cs991/AndroidStudioProjects/MusicWorld/app/src/main/res/layout/current_music_item.xml" value="0.23125" />
         <entry key="..\:/Users/cs991/AndroidStudioProjects/MusicWorld/app/src/main/res/layout/music_item.xml" value="0.305" />
         <entry key="..\:/Users/cs991/AndroidStudioProjects/MusicWorld/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.185" />
       </map>

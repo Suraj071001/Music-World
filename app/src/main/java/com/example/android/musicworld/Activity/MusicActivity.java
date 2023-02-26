@@ -4,10 +4,17 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
+import android.annotation.SuppressLint;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.SeekBar;
@@ -22,70 +29,41 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
 
-public class MusicActivity extends AppCompatActivity {
+public class MusicActivity extends AppCompatActivity implements ServiceConnection,SharedPreferences.OnSharedPreferenceChangeListener {
     public static final String TAG = "myTag";
 
     ActivityMusicBinding binding;
-    public static int position = 0;
-    MediaPlayer.OnCompletionListener listener;
     Boolean isActivityAlive;
+    MusicService musicService;
+    Intent intent1;
+    SharedPreferences sharedPreferences;
 
     int saved_position=0;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this,R.layout.activity_music);
+        Objects.requireNonNull(getSupportActionBar()).hide();
 
         if(savedInstanceState!=null){
             saved_position = (int) savedInstanceState.get("current_song_position");
         }
 
-
-        Objects.requireNonNull(getSupportActionBar()).hide();
-
         isActivityAlive = true;
 
-        listener = new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mediaPlayer) {
-                if(position<MainActivity.songs.size()-1){
-                    position++;
-                    MainActivity.current_music_position++;
-                }
-                else{ position =0;}
-                createMusic();
-            }
-        };
-
-        Intent intent = getIntent();
-        position = intent.getIntExtra("position",0);
-        String where = intent.getStringExtra("where");
-        binding.seekBar.setMax(Math.toIntExact(MainActivity.songs.get(position).getDuration()));
-
-        switch (where){
-            case "list":
-                createMusic();
-                break;
-            case "name":
-                if(MainActivity.firstTime){
-                    binding.btnPlayMusic.setImageResource(R.drawable.pause);
-                    createMusic();
-                    MainActivity.firstTime = false;
-                }
-                int seek_position = intent.getIntExtra("seek_position",0);
-                if(MainActivity.mediaPlayer.isPlaying()){
-                    binding.seekBar.setMax(Math.toIntExact(MainActivity.songs.get(position).getDuration()));
-                    binding.seekBar.setProgress(seek_position);
-                }
-                updateMusicViews();
-        }
-
+        intent1 = new Intent(this,MusicService.class);
+        intent1.setAction("MusicActivity");
+        bindService(intent1,this,BIND_AUTO_CREATE);
 
         binding.seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                MainActivity.mediaPlayer.seekTo(i);
+                MainActivity.musicService.mediaPlayer.seekTo(i);
             }
 
             @Override
@@ -100,76 +78,143 @@ public class MusicActivity extends AppCompatActivity {
         });
 
         binding.btnPreviousMusic.setOnClickListener(view -> {
-            if(position == 0){
-                position = MainActivity.songs.size() -1;
-            }else{
-                position--;
-                MainActivity.current_music_position--;
-            }
-            createMusic();
-
+            musicService.previousMusic();
+            updateMusicViews();
+            binding.btnPlayMusic.setImageResource(R.drawable.pause);
+            startService(intent1);
+            binding.seekBar.setProgress(0);
         });
 
         binding.btnPlayMusic.setOnClickListener(view -> {
-            if(MainActivity.mediaPlayer.isPlaying()){
-                MainActivity.mediaPlayer.pause();
-                binding.btnPlayMusic.setImageResource(R.drawable.play);
-            }else{
-                MainActivity.mediaPlayer.start();
+            musicService.play();
+            updateMusicViews();
+            startService(intent1);
+            if(musicService.mediaPlayer.isPlaying()){
                 binding.btnPlayMusic.setImageResource(R.drawable.pause);
+            }else{
+                binding.btnPlayMusic.setImageResource(R.drawable.play);
             }
         });
 
         binding.btnNextMusic.setOnClickListener(view -> {
-            if(position<MainActivity.songs.size()-1){position++;
-            MainActivity.current_music_position++;}
-            else{ position =0;}
-            createMusic();
+            musicService.nextMusic();
+            updateMusicViews();
+            binding.btnPlayMusic.setImageResource(R.drawable.pause);
+            startService(intent1);
+            binding.seekBar.setProgress(0);
         });
+
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+
     }
 
-    private void createMusic() {
-        binding.seekBar.setProgress(0);
-        MainActivity.mediaPlayer.reset();
-        try {
-            MainActivity.mediaPlayer.setDataSource(this,Uri.parse(MainActivity.songs.get(position).getPath()));
-            MainActivity.mediaPlayer.prepare();
-            MainActivity.mediaPlayer.setOnCompletionListener(listener);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        binding.seekBar.setMax(Math.toIntExact(MainActivity.songs.get(position).getDuration()));
-        MainActivity.mediaPlayer.start();
-        if(isActivityAlive)
-        updateMusicViews();
-        MainActivity.mediaPlayer.seekTo(saved_position);
-    }
 
     private void updateMusicViews(){
-        binding.tvCurrentMusicName.setText(MainActivity.songs.get(position).getTitle());
-        Uri artUri = MainActivity.songs.get(position).getArtUri();
+        binding.tvCurrentMusicName.setText(MainActivity.songs.get(musicService.current_music_position).getTitle());
+        Uri artUri = MainActivity.songs.get(musicService.current_music_position).getArtUri();
         if(isActivityAlive){
             Glide.with(this)
                     .load(artUri)
                     .apply(RequestOptions.placeholderOf(R.drawable.music_icon).centerCrop())
                     .into(binding.imCurrentMusicImage);
         }
-
+        binding.maxDuration.setText(MainActivity.songs.get(musicService.current_music_position).duration());
     }
 
     @Override
     protected void onDestroy(){
         super.onDestroy();
         isActivityAlive = false;
+        sharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
     }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt("current_song_position",MainActivity.mediaPlayer.getCurrentPosition());
+        outState.putInt("current_song_position",MainActivity.musicService.mediaPlayer.getCurrentPosition());
     }
 
-    private void updateSeekbar(){
 
+    @Override
+    public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+        MusicService.MyMusicBinder mBinder = (MusicService.MyMusicBinder) iBinder;
+        musicService = mBinder.getService();
+
+        Intent intent;
+        intent = getIntent();
+        String where = intent.getStringExtra("where");
+        binding.seekBar.setMax(Math.toIntExact(MainActivity.songs.get(musicService.current_music_position).getDuration()));
+        switch (where){
+            case "list":
+                musicService.createMusic();
+                break;
+            case "name":
+                if(MainActivity.firstTime){
+                    binding.btnPlayMusic.setImageResource(R.drawable.pause);
+                    musicService.createMusic();
+                    MainActivity.firstTime = false;
+                }
+                int seek_position = intent.getIntExtra("seek_position",0);
+                if(MainActivity.musicService.mediaPlayer.isPlaying()){
+                    binding.seekBar.setMax(Math.toIntExact(MainActivity.songs.get(musicService.current_music_position).getDuration()));
+                    binding.seekBar.setProgress(seek_position);
+                }
+        }
+        updateMusicViews();
+    }
+
+    private void runSeekbar(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                int currentPosition = musicService.mediaPlayer.getCurrentPosition();
+                int total = musicService.mediaPlayer.getDuration();
+
+
+                while (currentPosition < total) {
+                    try {
+                        Thread.sleep(1000);
+                        currentPosition = musicService.mediaPlayer.getCurrentPosition();
+                    } catch (InterruptedException e) {
+                        return;
+                    } catch (Exception e) {
+                        return;
+                    }
+
+                    binding.seekBar.setProgress(currentPosition);
+
+                }
+            }
+        }).start();
+    }
+
+    @Override
+    public void onServiceDisconnected(ComponentName componentName) {
+
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+        if(s.equals("position")){
+            updateMusicViews();
+            binding.seekBar.setMax(Math.toIntExact(MainActivity.songs.get(musicService.current_music_position).getDuration()));
+        }
+        else if(s.equals("isPlaying")){
+            if(musicService.mediaPlayer.isPlaying()){
+                binding.btnPlayMusic.setImageResource(R.drawable.pause);
+            }else {
+                binding.btnPlayMusic.setImageResource(R.drawable.play);
+            }
+        }
+    }
+
+    @SuppressLint("DefaultLocale")
+    public String duration(int dur){
+        long duration = dur;
+        int totalSeconds = (int) (duration/1000);
+        int min = totalSeconds/60;
+        int sec = totalSeconds%60;
+        return String.format("%02d:%02d",min,sec);
     }
 }

@@ -6,7 +6,7 @@
     android:id="@+id/constraint_layout"
     android:paddingEnd="5dp"
     android:paddingStart="5dp"
-    android:background="@drawable/selector"
+    android:background="@color/primarySelector"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 

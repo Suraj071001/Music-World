@@ -7,6 +7,9 @@
         <variable
             name="name"
             type="String" />
+        <variable
+            name="shuffle"
+            type="Boolean" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -26,25 +29,19 @@
 
                 <ImageView
                     android:id="@+id/shuffleBtn"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
+                    style="@style/main_feature_button"
                     android:contentDescription="@string/shuffle_button_cd"
                     android:src="@drawable/shuffle" />
 
                 <ImageView
                     android:id="@+id/playlistBtn"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
+                    style="@style/main_feature_button"
                     android:contentDescription="@string/playlist_button_cd"
                     android:src="@drawable/playlist" />
 
                 <ImageView
                     android:id="@+id/favouriteBtn"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
+                    style="@style/main_feature_button"
                     android:contentDescription="@string/favourite_button_cd"
                     android:src="@drawable/favourite" />
 
